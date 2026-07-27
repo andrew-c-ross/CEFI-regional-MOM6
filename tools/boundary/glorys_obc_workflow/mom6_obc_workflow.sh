@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load required modules and environments
-source $MODULESHOME/init/sh
+source $MODULESHOME/init/bash
 module load miniforge
 conda activate /nbhome/role.medgrp/.conda/envs/uwtools || { echo "Error activating conda environment. Exiting."; exit 1; }
 
