@@ -157,7 +157,7 @@ if ! $DO_NCRCAT; then
     	    subset_args="$subset_args --convert_lon"
 	fi
         subset_job_id=$(sbatch --job-name="glorys_subset_${year}_${month}_${day}" \
-                              scripts/subset_glorys.sh $subset_arags | awk '{print $4}')
+                              scripts/subset_glorys.sh $subset_args | awk '{print $4}')
 
         log_message "Submitting fill_nan job for $current_date..."
         fill_job_id=$(sbatch --dependency=afterok:$subset_job_id \
