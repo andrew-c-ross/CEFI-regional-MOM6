@@ -66,6 +66,9 @@ main() {
     filled_dir="$glorys_arch_dir/filled"
     combined_file="$filled_dir/${OUTPUT_PREFIX}_${year}-${month}-${day}.nc"
 
+    # Make sure the output directory exists
+    mkdir -p {{ output_dir }}
+
     # Setup environment
     setup_environment
 

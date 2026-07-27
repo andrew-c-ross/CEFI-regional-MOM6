@@ -83,7 +83,7 @@ fi
 
 # Prepare directories
 CURRENT_DATE=$(date +%Y-%m-%d-%H-%M)
-mkdir -p ./log/$CURRENT_DATE ./outputs scripts
+mkdir -p ./log/$CURRENT_DATE scripts
 
 # Define user configurations
 log_message "Generating config.yaml..."
