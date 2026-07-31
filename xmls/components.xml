@@ -1,0 +1,97 @@
+
+<!-- This XML is intended to be inserted into FRE xmls as an ENTITY. -->
+
+<!-- FRE needs the following properties -->
+<property name="PROG_MAIN" value="FMScoupler/coupler_main.o"/>
+<property name="LIBS_ROOT" value="$(COMPILE_EXP)"/>
+
+<freInclude name="FMS">
+  <component name="fms" paths="FMS">
+    <!-- The FMS component clones the CEFI-regional-MOM6 repository, which includes
+    submodules for every component. All of the following components will
+    use these submodules, so we place symlinks to them in a slightly easier
+    to find location. All of the components after this have a
+    source block that doesn't do anything, since the code has already been obtained.
+    (Note that because the placeholder source blocks don't do anything,
+    csh blocks cannot be added to them.) -->
+    <source versionControl="git" root="https://github.com/NOAA-GFDL/">
+      <codeBase version="$(CEFI_GIT_TAG)">CEFI-regional-MOM6.git</codeBase>
+      <csh><![CDATA[
+          # Hide the CEFI-regional-MOM6 repository and put links to the
+          # source code submodules in the top level src/ directory
+          mv CEFI-regional-MOM6 .CEFI-regional-MOM6
+          foreach subpath ( .CEFI-regional-MOM6/src/* )
+          if ( -d "$subpath" ) then
+              ln -s $subpath .
+          endif
+          end
+      ]]></csh>
+    </source>
+    <compile>
+      <cppDefs>-Duse_libMPI -Duse_netCDF $(F2003_FLAGS) -DMAXFIELDMETHODS_=600</cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
+<freInclude name="MOM6_SYMMETRIC">
+  <component name="mom6_symmetric" requires="fms" paths="MOM6/config_src/memory/dynamic_symmetric MOM6/config_src/drivers/FMS_cap MOM6/src/*/ MOM6/src/*/*/ MOM6/config_src/external/MARBL MOM6/config_src/external/ODA_hooks MOM6/config_src/external/stochastic_physics MOM6/config_src/external/drifters MOM6/config_src/external/database_comms ocean_BGC/generic_tracers ocean_BGC/mocsy/src MOM6/pkg/GSW-Fortran/modules MOM6/pkg/GSW-Fortran/toolbox MOM6/config_src/infra/FMS2">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+      <cppDefs><![CDATA[ $(F2003_FLAGS) -DUSE_FMS2_IO -DMAX_FIELDS_=100 -DNOT_SET_AFFINITY -D_USE_MOM6_DIAG -D_USE_GENERIC_TRACER -DUSE_PRECISION=2 -D_FILE_VERSION="'"`git-version-string $<`"'" ]]></cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
+<freInclude name="SIS2">
+  <component name="sis2" paths="SIS2/config_src/dynamic_symmetric SIS2/config_src/external/Icepack_interfaces SIS2/src icebergs/src ice_param" requires="fms mom6_symmetric" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+        <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
+<freInclude name="ICEPACK">
+  <component name="Icepack" paths="Icepack/columnphysics" requires="fms mom6_symmetric" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework" >
+     <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+        <cppDefs><![CDATA[]]></cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
+<freInclude name="LAND_NULL">
+  <component name="land_null" paths="land_null" requires="fms">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+  </component>
+</freInclude>
+
+<freInclude name="ATMOS_NULL">
+  <component name="atmos_null" paths="atmos_null" requires="fms">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+      <cppDefs>$(F2003_FLAGS) </cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
+<freInclude name="COUPLER">
+  <component name="coupler" paths="coupler/full coupler/shared" requires="fms land_null atmos_null sis2 mom6_symmetric">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+      <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_USE_LEGACY_LAND_ -Duse_AM3_physics -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
+    </compile>
+  </component>
+</freInclude>

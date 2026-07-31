@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!DOCTYPE experimentSuite [
+  <!ENTITY include_components SYSTEM "../components.xml">
+]>
 <!-- FRE Usage documentation: http://www.gfdl.noaa.gov/fms/fre -->
 <!--
 Quick start guide
@@ -35,10 +38,7 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_cobalt.xml CEFI_NWA12_COBALT_V
 
 -->
 
-<experimentSuite rtsVersion="4" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!-- git tag for CEFI-regional-MOM6 source code -->
-  <property name="CEFI_GIT_TAG" value="main"/>
-
+<experimentSuite rtsVersion="4" xmlns:xi="http://www.w3.org/2003/XInclude">
   <!-- This will be included in the paths to the compiled model binary and /archive. Customize as desired.-->
   <property name="FRE_STEM" value="fre/cefi/NWA/2026_07"/>
 
@@ -102,83 +102,31 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_cobalt.xml CEFI_NWA12_COBALT_V
 
   <!-- COMPILE -->
 
-  <property name="PROG_MAIN" value="FMScoupler/coupler_main.o"/>
-  <property name="LIBS_ROOT" value="FMS2_MOM6_SIS2_COBALT_compile_symm"/>
+  <!-- git tag for CEFI-regional-MOM6 source code -->
+  <property name="CEFI_GIT_TAG" value="main"/>
+  <!-- Name of the compile experiment: -->
+  <property name="COMPILE_EXP" value="FMS2_MOM6_SIS2_COBALT_compile_symm"/>
+  <!-- Insert the freInclude for each component from ../components.xml, as defined by the entity at the top -->
+  &include_components;
 
-  <experiment name="$(LIBS_ROOT)">
+  <experiment name="$(COMPILE_EXP)">
     <description>
       Make the executable for ocean-ice experiments.
+      Each component is defined as a freInclude ultimately sourced from ../components.xml.
+      To check out a specific release of the CEFI code base, set CEFI_GIT_TAG.
+      To change individual components, delete the FMS include,
+      copy the FMS comopnent from ../compoments.xml,
+      and customize the component root or csh.
     </description>
-    <component name="fms" paths="FMS">
-      <!-- The FMS component clones the CEFI-regional-MOM6 repository, which includes
-      submodules for every component. All of the following components will
-      use these submodules, so we place symlinks to them in a slightly easier
-      to find location. All of the components after this have a
-      source block that doesn't do anything, since the code has already been obtained.
-      (Note that because the placeholder source blocks don't do anything,
-      csh blocks cannot be added to them.) -->
-      <source versionControl="git" root="https://github.com/NOAA-GFDL/">
-        <codeBase version="$(CEFI_GIT_TAG)">CEFI-regional-MOM6.git</codeBase>
-        <csh><![CDATA[
-          # Hide the CEFI-regional-MOM6 repository and put links to the
-          # source code submodules in the top level src/ directory
-          mv CEFI-regional-MOM6 .CEFI-regional-MOM6
-          foreach subpath ( .CEFI-regional-MOM6/src/* )
-            if ( -d "$subpath" ) then
-              ln -s $subpath .
-            endif
-          end
-        ]]></csh>
-      </source>
-      <compile>
-        <cppDefs>-Duse_libMPI -Duse_netCDF $(F2003_FLAGS) -DMAXFIELDMETHODS_=600</cppDefs>
-      </compile>
-    </component>
-
-    <component name="mom6_symmetric" requires="fms" paths="MOM6/config_src/memory/dynamic_symmetric MOM6/config_src/drivers/FMS_cap MOM6/src/*/ MOM6/src/*/*/ MOM6/config_src/external/MARBL MOM6/config_src/external/ODA_hooks MOM6/config_src/external/stochastic_physics MOM6/config_src/external/drifters MOM6/config_src/external/database_comms ocean_BGC/generic_tracers ocean_BGC/mocsy/src MOM6/pkg/GSW-Fortran/modules MOM6/pkg/GSW-Fortran/toolbox MOM6/config_src/infra/FMS2">
-      <source versionControl="none" root=".">
-        <codeBase version="none"> placeholder </codeBase>
-      </source>
-      <compile>
-        <cppDefs><![CDATA[ $(F2003_FLAGS) -DUSE_FMS2_IO -DMAX_FIELDS_=100 -DNOT_SET_AFFINITY -D_USE_MOM6_DIAG -D_USE_GENERIC_TRACER -DUSE_PRECISION=2 -D_FILE_VERSION="'"`git-version-string $<`"'" ]]></cppDefs>
-      </compile>
-    </component>
-
-    <component name="sis2" paths="SIS2/config_src/dynamic_symmetric SIS2/config_src/external/Icepack_interfaces SIS2/src icebergs/src ice_param" requires="fms mom6_symmetric" includeDir="$root/$(LIBS_ROOT)/src/MOM6/src/framework">
-      <source versionControl="none" root=".">
-        <codeBase version="none"> placeholder </codeBase>
-      </source>
-      <compile>
-         <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
-      </compile>
-    </component>
-
-    <component name="land_null" paths="land_null" requires="fms">
-      <source versionControl="none" root=".">
-        <codeBase version="none"> placeholder </codeBase>
-      </source>
-    </component>
-
-    <component name="atmos_null" paths="atmos_null" requires="fms">
-      <source versionControl="none" root=".">
-        <codeBase version="none"> placeholder </codeBase>
-      </source>
-      <compile>
-        <cppDefs>$(F2003_FLAGS) </cppDefs>
-      </compile>
-    </component>
-
-    <component name="coupler" paths="coupler/full coupler/shared" requires="fms land_null atmos_null sis2 mom6_symmetric">
-      <source versionControl="none" root=".">
-        <codeBase version="none"> placeholder </codeBase>
-      </source>
-      <compile>
-        <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_USE_LEGACY_LAND_ -Duse_AM3_physics -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
-      </compile>
-    </component>
+    <xi:include xpointer="xpointer(//freInclude[@name='FMS']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_SYMMETRIC']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='SIS2']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='LAND_NULL']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='ATMOS_NULL']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='COUPLER']/component)"/>
   </experiment>
 
-  <experiment name="CEFI_NWA12_COBALT_V2" inherit="$(LIBS_ROOT)">
+  <experiment name="CEFI_NWA12_COBALT_V2" inherit="$(COMPILE_EXP)">
     <description>
     </description>
     <input>
@@ -709,7 +657,7 @@ COBALT_INPUT_EOF
          cp diag_table input.nml metadata.out/
          cp INPUT/*_input INPUT/*_override metadata.out/
          # Save the Git commit hash for each source code submodule
-         git -C $root/$(LIBS_ROOT)/src/.CEFI-regional-MOM6 submodule status --recursive > metadata.out/git_submodule_status
+         git -C $root/$(COMPILE_EXP)/src/.CEFI-regional-MOM6 submodule status --recursive > metadata.out/git_submodule_status
          # Archive a copy of the xml used to run the model and the run script (fre sets these)
          cp $rtsxml metadata.out/
          cp $scriptName metadata.out/runscript.csh

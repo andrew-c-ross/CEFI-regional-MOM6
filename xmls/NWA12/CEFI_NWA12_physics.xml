@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!DOCTYPE experimentSuite [
+  <!ENTITY include_components SYSTEM "../components.xml">
+]>
 <!-- FRE Usage documentation: http://www.gfdl.noaa.gov/fms/fre -->
 <!--
 Quick start guide
@@ -13,7 +16,7 @@ module use -a /ncrc/home2/fms/local/modulefiles
 module load fre/bronx-23
 
 Compile and build mom6-sis2-cobalt:
-fremake -x CEFI_NWA12_physics.xml -p ncrc6.intel23 -t prod,hdf5 MOM6_SIS2_GENERIC_4P_compile_symm
+fremake -x CEFI_NWA12_physics.xml -p ncrc6.intel23 -t prod,hdf5 FMS2_MOM6_SIS2_COBALT_compile_symm
 
 Run experiment
 frerun -x CEFI_NWA12_physics.xml -p ncrc6.intel23 -t prod,hdf5 CEFI_NWA12_physics_V2
@@ -35,24 +38,9 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_physics.xml CEFI_NWA12_physics
 
 -->
 
-<experimentSuite rtsVersion="4" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!-- git tag for FMS source code -->
-  <property name="FMS_GIT_TAG" value="2025.03"/>
-
-  <!-- git tag for shared source code -->
-  <property name="CPL_GIT_TAG" value="2025.03"/>
-
-  <!-- git tag for null model source code -->
-  <property name="NULL_TAG" value="2025.02"/>
-
-  <!-- git tag for CEFI-regional-MOM6 source code -->
-  <property name="MOM6_GIT_TAG" value="main"/>
-
-  <!-- git tag for ice_param -->
-  <property name="ICEPARAM_GIT_TAG" value="2024.02"/>
-
+<experimentSuite rtsVersion="4" xmlns:xi="http://www.w3.org/2003/XInclude">
   <!-- This will be included in the paths to the compiled model binary and /archive. Customize as desired.-->
-  <property name="FRE_STEM" value="fre/cefi/NWA/2025_06"/>
+  <property name="FRE_STEM" value="fre/cefi/NWA/2026_07"/>
 
   <!-- Please make sure to change your group, such as b, f, g, m, o... -->
   <property name="NCRC_GROUP" value="ira-cefi"/>
@@ -108,79 +96,33 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_physics.xml CEFI_NWA12_physics
     <xi:include href="../xml_include/xml_building_blocks/platforms.xml" xpointer="xpointer(//freInclude/platform[@name='gfdl.ncrc6-intel23'])"/>
   </setup>
 
-  <!--= COMPILE =-->
-  <!--===========-->
-  <!--The property MOM6_OBGC_EXAMPLES should point to the mom6 directory that is checked out. It is needed by MOM6 to access its input data files-->
-  <property name="PROG_MAIN" value="coupler/coupler_main.o"/>
-  <property name="LIBS_ROOT" value="MOM6_SIS2_GENERIC_4P_compile_symm"/>
-  <property name="FMS_LIB_DIR" value="./$(LIBS_ROOT)/$(platform)-$(target)/exec"/>
+  <!-- COMPILE -->
 
-  <property name="MY_LIBS" value="$(EXEC_ROOT)/$(FMS_LIB_DIR)"/>
+  <!-- git tag for CEFI-regional-MOM6 source code -->
+  <property name="CEFI_GIT_TAG" value="main"/>
+  <!-- Name of the compile experiment: -->
+  <property name="COMPILE_EXP" value="FMS2_MOM6_SIS2_COBALT_compile_symm"/>
+  <!-- Insert the freInclude for each component from ../components.xml, as defined by the entity at the top -->
+  &include_components;
 
-  <experiment name="MOM6_SIS2_GENERIC_4P_compile_symm">
+  <experiment name="$(COMPILE_EXP)">
     <description>
       Make the executable for ocean-ice experiments.
-      Uses FMS2 (for unknown reason FMS1 does not work with intel23 on C6)
+      Each component is defined as a freInclude ultimately sourced from ../components.xml.
+      To check out a specific release of the CEFI code base, set CEFI_GIT_TAG.
+      To change individual components, delete the FMS include,
+      copy the FMS comopnent from ../compoments.xml,
+      and customize the component root or csh.
     </description>
-    <component name="fms" paths="FMS">
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-        <codeBase version="$(FMS_GIT_TAG)"> FMS.git </codeBase>
-      </source>
-      <compile>
-        <cppDefs>-Duse_libMPI -Duse_netCDF $(F2003_FLAGS) -DMAXFIELDMETHODS_=600</cppDefs>
-      </compile>
-    </component>
-
-    <component name="mom6_symmetric" requires="fms" paths="mom6/src/MOM6/config_src/memory/dynamic_symmetric mom6/src/MOM6/config_src/drivers/FMS_cap mom6/src/MOM6/src/*/ mom6/src/MOM6/src/*/*/ mom6/src/MOM6/config_src/external/MARBL mom6/src/MOM6/config_src/external/ODA_hooks mom6/src/MOM6/config_src/external/stochastic_physics mom6/src/MOM6/config_src/external/drifters mom6/src/MOM6/config_src/external/database_comms mom6/src/ocean_BGC/generic_tracers mom6/src/ocean_BGC/mocsy/src mom6/src/MOM6/pkg/GSW-Fortran/modules mom6/src/MOM6/pkg/GSW-Fortran/toolbox mom6/src/MOM6/config_src/infra/FMS2">
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-              <codeBase version="$(MOM6_GIT_TAG)"> CEFI-regional-MOM6.git </codeBase>
-        <csh><![CDATA[
-          mv CEFI-regional-MOM6 mom6
-        ]]></csh>
-      </source>
-      <compile>
-        <cppDefs><![CDATA[ $(F2003_FLAGS) -DUSE_FMS2_IO -DMAX_FIELDS_=100 -DNOT_SET_AFFINITY -D_USE_MOM6_DIAG -D_USE_GENERIC_TRACER  -DUSE_PRECISION=2 -D_FILE_VERSION="'"`git-version-string $<`"'" ]]></cppDefs>
-        <!--makeOverrides>OPENMP=""</makeOverrides>  openmp switch for MOM6 may cause crash -->
-      </compile>
-    </component>
-
-    <component name="sis2" paths="mom6/src/SIS2/config_src/dynamic_symmetric mom6/src/SIS2/config_src/external/Icepack_interfaces mom6/src/SIS2/src mom6/src/icebergs/src mom6/src/ice_param" requires="fms mom6_symmetric" includeDir="$root/$(LIBS_ROOT)/src/mom6/src/MOM6/src/framework" >
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-        <codeBase version="$(ICEPARAM_GIT_TAG)"> ice_param.git </codeBase>
-      </source>
-      <compile>
-         <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
-      </compile>
-    </component>
-
-    <component name="land_null" paths="mom6/src/land_null" requires="fms">
-      <description domainName="NA" communityName="NA" communityVersion="NA" communityGrid="NA"/>
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-        <codeBase version="$(NULL_TAG)"> land_null.git </codeBase>
-      </source>
-    </component>
-
-    <component name="atmos_null" paths="mom6/src/atmos_null" requires="fms">
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-        <codeBase version="$(NULL_TAG)"> atmos_null.git </codeBase>
-      </source>
-      <compile>
-        <cppDefs>$(F2003_FLAGS) </cppDefs>
-      </compile>
-    </component>
-
-    <component name="coupler" paths="mom6/src/coupler/full mom6/src/coupler/shared" requires="fms land_null atmos_null sis2 mom6_symmetric">
-      <description domainName="FMS Coupler" communityName="coupler" communityVersion="$(CPL_GIT_TAG)" communityGrid=""/>
-      <source versionControl="git" root="https://github.com/NOAA-GFDL">
-        <codeBase version="$(CPL_GIT_TAG)"> coupler.git </codeBase>
-      </source>
-      <compile>
-        <cppDefs><![CDATA[$(F2003_FLAGS) -DUSE_FMS2_IO -D_USE_LEGACY_LAND_ -Duse_AM3_physics -D_FILE_VERSION="'"`git-version-string $<`"'"]]></cppDefs>
-      </compile>
-    </component>
+    <xi:include xpointer="xpointer(//freInclude[@name='FMS']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_SYMMETRIC']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='SIS2']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='LAND_NULL']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='ATMOS_NULL']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='COUPLER']/component)"/>
   </experiment>
 
-  <experiment name="CEFI_NWA12_physics_V2" inherit="MOM6_SIS2_GENERIC_4P_compile_symm">
+  <experiment name="CEFI_NWA12_physics_V2" inherit="$(COMPILE_EXP)">
     <description>
     </description>
     <input>
@@ -440,7 +382,7 @@ MOM_OVERRIDE_EOF
          cp diag_table input.nml metadata.out/
          cp INPUT/*_input INPUT/*_override metadata.out/
          # Save the Git commit hash for each source code submodule
-         git -C $root/$(LIBS_ROOT)/src/mom6 submodule status --recursive > metadata.out/git_submodule_status
+         git -C $root/$(COMPILE_EXP)/src/.CEFI-regional-MOM6 submodule status --recursive > metadata.out/git_submodule_status
          # Archive a copy of the xml used to run the model and the run script (fre sets these)
          cp $rtsxml metadata.out/
          cp $scriptName metadata.out/runscript.csh
