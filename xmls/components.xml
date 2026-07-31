@@ -2,7 +2,7 @@
 <!-- This XML is intended to be inserted into FRE xmls as an ENTITY. -->
 
 <!-- FRE needs the following properties -->
-<property name="PROG_MAIN" value="FMScoupler/coupler_main.o"/>
+<property name="PROG_MAIN" value="coupler/coupler_main.o"/>
 <property name="LIBS_ROOT" value="$(COMPILE_EXP)"/>
 
 <freInclude name="FMS">
