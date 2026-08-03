@@ -115,7 +115,7 @@ frecheck -v -r restart -p ncrc6.intel23 -t repro  -x CEFI_NEP_cobalt.xml CEFI_NE
       and customize the component root or csh.
     </description>
     <xi:include xpointer="xpointer(//freInclude[@name='FMS']/component)"/>
-    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_SYMMETRIC']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_BGC']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='ICEPACK']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='SIS2']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='LAND_NULL']/component)"/>
@@ -550,7 +550,7 @@ cat > $work/INPUT/MOM_override << MOM_OVERRIDE_EOF
 #override U_TRUNC_FILE = "U.velocity_truncations"
 #override V_TRUNC_FILE = "V.velocity_truncations"
 #override TIDES_ANSWER_DATE = 20230630
-#override WAVE_INTERFACE_ANSWER_DATE = 20221231 
+#override WAVE_INTERFACE_ANSWER_DATE = 20221231
 #override MASS_WEIGHT_IN_PRESSURE_GRADIENT_TOP = False
 MOM_OVERRIDE_EOF
 

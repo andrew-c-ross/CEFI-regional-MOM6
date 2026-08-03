@@ -33,8 +33,9 @@
   </component>
 </freInclude>
 
-<freInclude name="MOM6_SYMMETRIC">
-  <component name="mom6_symmetric" requires="fms" paths="MOM6/config_src/memory/dynamic_symmetric MOM6/config_src/drivers/FMS_cap MOM6/src/*/ MOM6/src/*/*/ MOM6/config_src/external/MARBL MOM6/config_src/external/ODA_hooks MOM6/config_src/external/stochastic_physics MOM6/config_src/external/drifters MOM6/config_src/external/database_comms ocean_BGC/generic_tracers ocean_BGC/mocsy/src MOM6/pkg/GSW-Fortran/modules MOM6/pkg/GSW-Fortran/toolbox MOM6/config_src/infra/FMS2">
+<!-- MOM6 with ocean_BGC -->
+<freInclude name="MOM6_BGC">
+  <component name="mom6" requires="fms" paths="MOM6/config_src/memory/dynamic_symmetric MOM6/config_src/drivers/FMS_cap MOM6/src/*/ MOM6/src/*/*/ MOM6/config_src/external/MARBL MOM6/config_src/external/ODA_hooks MOM6/config_src/external/stochastic_physics MOM6/config_src/external/drifters MOM6/config_src/external/database_comms ocean_BGC/generic_tracers ocean_BGC/mocsy/src MOM6/pkg/GSW-Fortran/modules MOM6/pkg/GSW-Fortran/toolbox MOM6/config_src/infra/FMS2">
     <source versionControl="none" root=".">
       <codeBase version="none"> placeholder </codeBase>
     </source>
@@ -44,8 +45,20 @@
   </component>
 </freInclude>
 
+<!-- MOM6 without ocean_BGC -->
+<freInclude name="MOM6_ONLY">
+  <component name="mom6" requires="fms" paths="MOM6/config_src/memory/dynamic_symmetric MOM6/config_src/drivers/FMS_cap MOM6/src/*/ MOM6/src/*/*/ MOM6/config_src/external/MARBL MOM6/config_src/external/ODA_hooks MOM6/config_src/external/stochastic_physics MOM6/config_src/external/drifters MOM6/config_src/external/database_comms MOM6/config_src/external/GFDL_ocean_BGC MOM6/pkg/GSW-Fortran/modules MOM6/pkg/GSW-Fortran/toolbox MOM6/config_src/infra/FMS2">
+    <source versionControl="none" root=".">
+      <codeBase version="none"> placeholder </codeBase>
+    </source>
+    <compile>
+      <cppDefs><![CDATA[ $(F2003_FLAGS) -DUSE_FMS2_IO -DMAX_FIELDS_=100 -DNOT_SET_AFFINITY -D_USE_MOM6_DIAG -DUSE_PRECISION=2 -D_FILE_VERSION="'"`git-version-string $<`"'" ]]></cppDefs>
+    </compile>
+  </component>
+</freInclude>
+
 <freInclude name="SIS2">
-  <component name="sis2" paths="SIS2/config_src/dynamic_symmetric SIS2/config_src/external/Icepack_interfaces SIS2/src icebergs/src ice_param" requires="fms mom6_symmetric" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework">
+  <component name="sis2" paths="SIS2/config_src/dynamic_symmetric SIS2/config_src/external/Icepack_interfaces SIS2/src icebergs/src ice_param" requires="fms mom6" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework">
     <source versionControl="none" root=".">
       <codeBase version="none"> placeholder </codeBase>
     </source>
@@ -56,7 +69,7 @@
 </freInclude>
 
 <freInclude name="ICEPACK">
-  <component name="Icepack" paths="Icepack/columnphysics" requires="fms mom6_symmetric" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework" >
+  <component name="Icepack" paths="Icepack/columnphysics" requires="fms mom6" includeDir="$root/$(COMPILE_EXP)/src/MOM6/src/framework" >
      <source versionControl="none" root=".">
       <codeBase version="none"> placeholder </codeBase>
     </source>
@@ -86,7 +99,7 @@
 </freInclude>
 
 <freInclude name="COUPLER">
-  <component name="coupler" paths="coupler/full coupler/shared" requires="fms land_null atmos_null sis2 mom6_symmetric">
+  <component name="coupler" paths="coupler/full coupler/shared" requires="fms land_null atmos_null sis2 mom6">
     <source versionControl="none" root=".">
       <codeBase version="none"> placeholder </codeBase>
     </source>

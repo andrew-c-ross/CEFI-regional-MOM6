@@ -119,7 +119,7 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_cobalt.xml CEFI_NWA12_COBALT_V
       and customize the component root or csh.
     </description>
     <xi:include xpointer="xpointer(//freInclude[@name='FMS']/component)"/>
-    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_SYMMETRIC']/component)"/>
+    <xi:include xpointer="xpointer(//freInclude[@name='MOM6_BGC']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='SIS2']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='LAND_NULL']/component)"/>
     <xi:include xpointer="xpointer(//freInclude[@name='ATMOS_NULL']/component)"/>
