@@ -115,7 +115,7 @@ frecheck -r layout -p ncrc6.intel23 -x CEFI_NWA12_cobalt_fms2_yaml.xml CEFI_NWA1
       Each component is defined as a freInclude ultimately sourced from ../components.xml.
       To check out a specific release of the CEFI code base, set CEFI_GIT_TAG.
       To change individual components, delete the FMS include,
-      copy the FMS comopnent from ../compoments.xml,
+      copy the FMS comopnent from ../components.xml,
       and customize the component root or csh.
       This experiment uses a different cppDefs for the FMS component and
       illustrates how to change this component.
