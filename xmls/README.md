@@ -49,24 +49,24 @@ git clone -b main https://github.com/NOAA-GFDL/CEFI-regional-MOM6.git
 # compile and build CEFI MOM6-SIS2-COBALT
 ```console
 cd CEFI-regional-MOM6/xmls/NWA12
-fremake -x CEFI_NWA12_cobalt.xml -p ncrc5.intel22 -t prod MOM6_SIS2_GENERIC_4P_compile_symm
+fremake -x CEFI_NWA12_cobalt.xml -p ncrc5.intel22 -t prod FMS2_MOM6_SIS2_COBALT_compile_symm
 ```
-The above step will git clone the source codes and prepare makefiles under `/gpfs/f5/cefi/scratch/<First.Last>/fre/cefi/NWA12/MOM6_SIS2_GENERIC_4P_compile_symm`.
+The above step will git clone the source codes and prepare makefiles under `/gpfs/f5/cefi/scratch/<First.Last>/fre/cefi/NWA12/FMS2_MOM6_SIS2_COBALT_compile_symm`.
 Once its done, user can submit a job for compiling/building MOM6-SIS2-COBALT:
 ```console
-sleep 1; sbatch /gpfs/f5/cefi/scratch/Yi-cheng.Teng/fre/cefi/NWA12/MOM6_SIS2_GENERIC_4P_compile_symm/ncrc5.intel22-prod/exec/compile_MOM6_SIS2_GENERIC_4P_compile_symm.csh
+sleep 1; sbatch /gpfs/f5/cefi/scratch/Yi-cheng.Teng/fre/cefi/NWA12/FMS2_MOM6_SIS2_COBALT_compile_symm/ncrc5.intel22-prod/exec/compile_FMS2_MOM6_SIS2_COBALT_compile_symm.csh
 ```
-User can check /gpfs/f5/cefi/scratch/<First.Last>/fre/cefi/NWA12/MOM6_SIS2_GENERIC_4P_compile_symm/ncrc5.intel22-prod/exec/compile_MOM6_SIS2_GENERIC_4P_compile_symm.csh.oJOB_ID to monitor the progress.
+User can check /gpfs/f5/cefi/scratch/<First.Last>/fre/cefi/NWA12/FMS2_MOM6_SIS2_COBALT_compile_symm/ncrc5.intel22-prod/exec/compile_FMS2_MOM6_SIS2_COBALT_compile_symm.csh.oJOB_ID to monitor the progress.
 If the job is completed successfully, you should be able to find the executable file:
 ```console
-ls -l -h /gpfs/f5/cefi/scratch/Yi-cheng.Teng/fre/cefi/NWA12/MOM6_SIS2_GENERIC_4P_compile_symm/ncrc5.intel22-prod/exec/fms_MOM6_SIS2_GENERIC_4P_compile_symm.x
+ls -l -h /gpfs/f5/cefi/scratch/Yi-cheng.Teng/fre/cefi/NWA12/FMS2_MOM6_SIS2_COBALT_compile_symm/ncrc5.intel22-prod/exec/fms_FMS2_MOM6_SIS2_COBALT_compile_symm.x
 ```
 # conduct 30-year hindcast simulation in NWA12 domain:
 The total length of the model simulation, in years, is controlled by the following parameter in the XML file:
 `<property name="PROD_SIMTIME" value="30"/>`
 Users can change this value to their desired simulated length. To conduct simulation, first do `frerun`:
 ```console
-frerun -x CEFI_NWA12_cobalt.xml -p ncrc5.intel22 -t prod CEFI_NWA12_COBALT_V1 
+frerun -x CEFI_NWA12_cobalt.xml -p ncrc5.intel22 -t prod CEFI_NWA12_COBALT_V1
 ```
 Once the aboe step is done, it will create a job script `/gpfs/f5/cefi/scratch/<First.Last>/fre/cefi/NWA12/CEFI_NWA12_COBALT_V1/ncrc5.intel22-prod/scripts/run/CEFI_NWA12_COBALT_V1`.
 To submit the simulation, simply type:
