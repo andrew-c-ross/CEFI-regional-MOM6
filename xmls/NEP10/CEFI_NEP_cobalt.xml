@@ -14,14 +14,14 @@ module use /ncrc/home2/fms/local/modulefiles
 module load fre/bronx-23
 
 C5:
-fremake -x CEFI_NEP_cobalt.xml -p ncrc5.intel23 -t repro MOM6_SIS2_GENERIC_4P_compile_symm
+fremake -x CEFI_NEP_cobalt.xml -p ncrc5.intel23 -t repro FMS2_MOM6_SIS2_COBALT_compile_symm
 frerun  -x CEFI_NEP_cobalt.xml -p ncrc5.intel23 -t repro CEFI_NEP_COBALT_V1
 
 Regression test
 frerun -x CEFI_NEP_cobalt.xml -p ncrc5.intel23 -q debug -r test -t repro CEFI_NEP_COBALT_V1
 
 C6:
-fremake -x CEFI_NEP_cobalt.xml -p ncrc6.intel23 -t repro MOM6_SIS2_GENERIC_4P_compile_symm
+fremake -x CEFI_NEP_cobalt.xml -p ncrc6.intel23 -t repro FMS2_MOM6_SIS2_COBALT_compile_symm
 frerun  -x CEFI_NEP_cobalt.xml -p ncrc6.intel23 -t repro CEFI_NEP_COBALT_V1
 
 pp (on PPAN):
