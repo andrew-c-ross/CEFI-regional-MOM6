@@ -12,7 +12,7 @@
 
 echo "Running ncrcat_obc.sh with arguments: $@"
 
-source $MODULESHOME/init/sh
+source $MODULESHOME/init/bash
 module load miniforge
 conda activate /nbhome/role.medgrp/.conda/envs/medpy311
 module load cdo nco gcp

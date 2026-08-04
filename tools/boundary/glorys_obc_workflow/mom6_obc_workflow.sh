@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load required modules and environments
-source $MODULESHOME/init/sh
+source $MODULESHOME/init/bash
 module load miniforge
 conda activate /nbhome/role.medgrp/.conda/envs/uwtools || { echo "Error activating conda environment. Exiting."; exit 1; }
 
@@ -83,7 +83,7 @@ fi
 
 # Prepare directories
 CURRENT_DATE=$(date +%Y-%m-%d-%H-%M)
-mkdir -p ./log/$CURRENT_DATE ./outputs scripts
+mkdir -p ./log/$CURRENT_DATE scripts
 
 # Define user configurations
 log_message "Generating config.yaml..."
@@ -157,7 +157,7 @@ if ! $DO_NCRCAT; then
     	    subset_args="$subset_args --convert_lon"
 	fi
         subset_job_id=$(sbatch --job-name="glorys_subset_${year}_${month}_${day}" \
-                              scripts/subset_glorys.sh $subset_arags | awk '{print $4}')
+                              scripts/subset_glorys.sh $subset_args | awk '{print $4}')
 
         log_message "Submitting fill_nan job for $current_date..."
         fill_job_id=$(sbatch --dependency=afterok:$subset_job_id \
