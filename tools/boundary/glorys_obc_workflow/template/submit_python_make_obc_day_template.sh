@@ -12,7 +12,7 @@
 
 # Setup environment
 setup_environment() {
-    source $MODULESHOME/init/sh
+    source $MODULESHOME/init/bash
     module load miniforge
     conda activate /nbhome/role.medgrp/.conda/envs/medpy311
     module load cdo nco gcp
@@ -65,6 +65,9 @@ main() {
     glorys_arch_dir="${REGIONAL_GLORYS_ARCHIVE}/${BASIN_NAME}"
     filled_dir="$glorys_arch_dir/filled"
     combined_file="$filled_dir/${OUTPUT_PREFIX}_${year}-${month}-${day}.nc"
+
+    # Make sure the output directory exists
+    mkdir -p {{ output_dir }}
 
     # Setup environment
     setup_environment
